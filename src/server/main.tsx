@@ -13,7 +13,6 @@ Bun.build({
     new URL("../client/pages/About/About.client.tsx", import.meta.url).pathname
   ],
   outdir: new URL("../../dist", import.meta.url).pathname,
-  // publicPath: "/pages/",
   naming: {
     asset: "dist/[dir]/[name].[ext]",
   }
