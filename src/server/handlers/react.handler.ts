@@ -1,4 +1,4 @@
-import { Attributes, createElement, FC } from "react";
+import { createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import { Middleware } from "../utils/middleware.ts";
 

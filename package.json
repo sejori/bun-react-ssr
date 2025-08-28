@@ -4,7 +4,9 @@
     "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "@types/react-dom": "^19.1.8",
-    "@types/bun": "^1.2.21"
+    "@happy-dom/global-registrator": "^18.0.1",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/bun": "^1.2.21",
+    "@types/react-dom": "^19.1.8"
   }
 }

@@ -8,7 +8,7 @@ export default function Index(props: { message: string }) {
 
   return <Document page="Index">
     <Layout>
-      <h1>{props.message}</h1>
+      <h2>{props.message}</h2>
       <p>{count}</p>
       <button onClick={() => setCount(count+1)}>UP</button>
       <br />

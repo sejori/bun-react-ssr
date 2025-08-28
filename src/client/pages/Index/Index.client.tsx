@@ -1,6 +1,6 @@
 import { hydrateRoot } from "react-dom/client";
 import { createElement } from "react";
-import App from ".";
+import App from "./Index";
 
 hydrateRoot(
   document,

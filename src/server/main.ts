@@ -1,8 +1,9 @@
 import { cascade } from "./utils/middleware";
-import Index from "../client/pages/Index";
-import { logger } from "./middleware/log.middleware";
+import { log } from "./middleware/log.middleware";
 import { reactHandler } from "./handlers/react.handler";
 import { file } from "./handlers/file.handler";
+
+import Index from "../client/pages/Index/Index";
 import About from "../client/pages/About/About";
 
 const PORT = process.env.PORT || 7777;
@@ -22,13 +23,13 @@ Bun.serve({
   port: PORT,
   routes: {
     "/": cascade(
-      logger,
+      log(console.log),
       reactHandler(Index, {
         message: "Hello world"
       })
     ),
     "/about": cascade(
-      logger,
+      log(console.log),
       (req, state) => {
         state["name"] = new URL(req.url).searchParams.get("name")
       },
@@ -39,11 +40,9 @@ Bun.serve({
     ),
   },
   fetch: cascade(
-    logger,
+    log(console.log),
     file
   )
 });
-
-
 
 console.log(`Server running on port ${PORT}`);
