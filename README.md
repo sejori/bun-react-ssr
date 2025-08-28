@@ -1,6 +1,6 @@
 # Getting started
 
-1. Run `$ bun --watch src/server/main.tsx`
+1. Run `$ bun --watch src/server/main.ts`
 2. Go to `http://localhost:777`
 3. Enjoy ^^
 

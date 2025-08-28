@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import "./assets/style.css";
+
+// imported to auto-build into assets dir
 import "./assets/react.svg";
 
 interface DocumentProps {

@@ -1,21 +1,19 @@
-export type Middleware = (
+export type Middleware<S extends {} = {}> = (
   request: Request, 
-  server: Bun.Server, 
-  next: () => Promise<Response | void>
+  state: S,
+  next: () => Promise<Response | void>,
+  server: Bun.Server
 ) => Promise<Response | void> | Response | void;
 
 export const cascade = (...mware: Middleware[]) =>
   async (request: Request, server: Bun.Server): Promise<Response> => {
-    const reqId = crypto.randomUUID();
-    (request as any).id = reqId;
-    if (!server["state"]) server["state"] = {};
-    server["state"][reqId] = {};
+    const state = {};
 
     const dispatch = async (i: number): Promise<Response> => {
       const fn = mware[i];
       if (!fn) return new Response("Not found", { status: 404 });
 
-      const res = await fn(request, server, () => dispatch(i + 1));
+      const res = await fn(request, state, () => dispatch(i + 1), server);
       if (res instanceof Response) {
         // short circuit
         return res;

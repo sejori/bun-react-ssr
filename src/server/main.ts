@@ -23,17 +23,19 @@ Bun.serve({
   routes: {
     "/": cascade(
       logger,
-      (req, server) => {
-        server["state"][req["id"]].message = "Hello world"
-      },
-      reactHandler(Index)
+      reactHandler(Index, {
+        message: "Hello world"
+      })
     ),
     "/about": cascade(
       logger,
-      (req, server) => {
-        server["state"][req["id"]].name = new URL(req.url).searchParams.get("name")
+      (req, state) => {
+        state["name"] = new URL(req.url).searchParams.get("name")
       },
-      reactHandler(About)
+      reactHandler(About, (_req, state) => ({
+        name: state["name"],
+        logged: state["logged"],
+      }))
     ),
   },
   fetch: cascade(

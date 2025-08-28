@@ -1,21 +1,22 @@
-import { createElement, JSX } from "react";
+import { Attributes, createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import { Middleware } from "../utils/middleware.ts";
 
-export interface ReactServerState {
-  message?: string;
-  name?: string;
-  logged: true;
-}
+export const reactHandler = <P extends {}>(
+  component: FC<P>, 
+  propsArg: P | ((req: Request, server: Bun.Server) => P)
+): Middleware =>
+  async (req, state) => {
+    const props = typeof propsArg === "function"
+      ? (propsArg as (req: Request, state: {}) => P)(req, state)
+      : propsArg;
 
-export const reactHandler = (component: (props: ReactServerState) => JSX.Element): Middleware =>
-  async (request, server) => {
     const stream = await renderToReadableStream(
-      createElement(component, server["state"][request["id"]]),
+      createElement(component, props),
       {
         bootstrapModules: [`/${component.name}/${component.name}.client.js`],
         bootstrapScriptContent: `
-          window.__INITIAL_PROPS__ = ${JSON.stringify(server["state"][request["id"]])};
+          window.__INITIAL_PROPS__ = ${JSON.stringify(props)};
         `,
         onError(error) {
           console.error("React SSR error:", error);
