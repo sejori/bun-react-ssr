@@ -1,10 +1,14 @@
 import { Middleware } from "../utils/middleware";
 
-export const log = (fn: ((...args: unknown[]) => void)): Middleware =>
-  async (req, state, next) => {
+export interface LogState {
+  logged: boolean;
+}
+
+export const log = (fn: ((...args: unknown[]) => void)): Middleware<{ logged: boolean }> =>
+  async (ctx, next) => {
     const start = performance.now();
-    state["logged"] = true;
+    ctx.state.logged = true;
     const res = await next();
     const end = performance.now();
-    fn(req.url, res?.status, `${end-start}ms`)
+    fn(ctx.request.url, res?.status, `${end-start}ms`)
   }

@@ -10,8 +10,7 @@ describe("reactHandler", () => {
   it("should render component with static props", async () => {
     const handler = reactHandler(Hello, { name: "Alice" });
 
-    const res = await handler(new Request("http://test"), {}, async () => {}, fakeServer);
-
+    const res = await handler({ request: new Request("http://test"), state: {}, server: fakeServer}, async () => {});
     expect(res).toBeInstanceOf(Response);
     expect(res?.headers.get("Content-Type")).toBe("text/html");
 
@@ -23,8 +22,7 @@ describe("reactHandler", () => {
   it("should render component with dynamic props", async () => {
     const handler = reactHandler(Hello, () => ({ name: "Bob" }));
 
-    const res = await handler(new Request("http://test"), {}, async () => {}, fakeServer);
-
+    const res = await handler({ request: new Request("http://test"), state: {}, server: fakeServer}, async () => {});
     const text = await res?.text();
     expect(text).toContain("Hello Bob");
     expect(text).toContain("Bob");
@@ -34,8 +32,7 @@ describe("reactHandler", () => {
     process.env.ENVIRONMENT = "PROD";
     const handler = reactHandler(Hello, { name: "CacheTest" });
 
-    const res = await handler(new Request("http://test"), {}, async () => {}, fakeServer);
-
+    const res = await handler({ request: new Request("http://test"), state: {}, server: fakeServer}, async () => {});
     expect(res?.headers.get("Cache-Control")).toContain("max-age");
   });
 });

@@ -1,5 +1,5 @@
 import { cascade } from "./utils/middleware";
-import { log } from "./middleware/log.middleware";
+import { log, LogState } from "./middleware/log.middleware";
 import { reactHandler } from "./handlers/react.handler";
 import { file } from "./handlers/file.handler";
 
@@ -28,14 +28,17 @@ Bun.serve({
         message: "Hello world"
       })
     ),
-    "/about": cascade(
+    // Generic type for inline name middleware and reactHandler prop factory
+    "/about": cascade<LogState & {
+      name: string;
+    }>(
       log(console.log),
-      (req, state) => {
-        state["name"] = new URL(req.url).searchParams.get("name")
+      (ctx) => {
+        ctx.state.name = new URL(ctx.request.url).searchParams.get("name") || ""
       },
-      reactHandler(About, (_req, state) => ({
-        name: state["name"],
-        logged: state["logged"],
+      reactHandler(About, (ctx) => ({
+        name: ctx.state.name,
+        logged: ctx.state.logged,
       }))
     ),
   },

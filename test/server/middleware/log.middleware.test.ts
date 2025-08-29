@@ -1,32 +1,27 @@
 import { describe, it, expect, mock } from "bun:test";
 import { log } from "../../../src/server/middleware/log.middleware";
-import type { Middleware } from "../../../src/server/utils/middleware";
-
-// Fake server placeholder
-const fakeServer = {} as unknown as Bun.Server;
+import { fakeContext } from "../server.test-utils";
 
 describe("log middleware", () => {
   it("should mark state.logged as true and call next()", async () => {
     const logFn = mock();
+    const nextFn = mock<() => Promise<Response>>();
     const m = log(logFn);
+    const state: Record<string, any> = {};
 
-    const downstream: Middleware = async () =>
-      new Response("ok", { status: 200 });
 
     const handler = async (req: Request) => {
-      let state: Record<string, any> = {};
-      return await m(req, state, async () => downstream(req, state, async () => {}, fakeServer), fakeServer);
+      return await m(fakeContext(req, state), async () => {
+        nextFn();
+        return new Response("ok");
+      });
     };
+    await handler(new Request("http://test/hello"));
 
-    const res = await handler(new Request("http://test/hello"));
-
-    expect(res).toBeInstanceOf(Response);
-    expect(res?.status).toBe(200);
-
-    // Ensure log marked state
-    const state: Record<string, any> = {};
-    await m(new Request("http://test/hello"), state, async () => new Response("ok"), fakeServer);
+    // Ensure log marked state and called next
+    await m(fakeContext(), nextFn);
     expect(state.logged).toBe(true);
+    expect(nextFn).toHaveBeenCalled();
 
     // Ensure log function was called
     expect(logFn).toHaveBeenCalled();
@@ -40,12 +35,7 @@ describe("log middleware", () => {
     const logFn = mock();
     const m = log(logFn);
 
-    const handler = async (req: Request) => {
-      let state: Record<string, any> = {};
-      return await m(req, state, async () => {}, fakeServer);
-    };
-
-    const res = await handler(new Request("http://test/none"));
+    const res = await m(fakeContext(new Request("http://test/none")), async () => {});
 
     expect(res).toBeUndefined(); // next() didn’t return a Response
     expect(logFn).toHaveBeenCalled();

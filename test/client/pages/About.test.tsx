@@ -1,6 +1,6 @@
 import { test, describe, expect } from "bun:test";
 import About from "../../../src/client/pages/About/About";
-import { renderToDocument } from "../test.utils";
+import { renderToDocument } from "../client.test-utils";
 
 describe("About page", () => {
   test("renders name and logged status", () => {

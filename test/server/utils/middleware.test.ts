@@ -5,8 +5,22 @@ import { cascade, Middleware } from "../../../src/server/utils/middleware";
 const fakeServer = {} as unknown as Bun.Server;
 
 describe("cascade()", () => {
+  it("should build MiddlewareContext correctly", async () => {
+    const m1: Middleware = async (ctx) => {
+      expect(ctx.request.url === "http://test");
+      expect(ctx.state).toEqual({});
+      expect(ctx.server).toBeDefined();
+      return new Response("Hi there.")
+    };
+
+    const handler = cascade(m1);
+    const res = await handler(new Request("http://test"), fakeServer);
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe("Hi there.");
+  });
+
   it("should cascade through middleware until a Response is returned", async () => {
-    const m1: Middleware = async (_req, _state, next) => {
+    const m1: Middleware = async (_ctx, next) => {
       return next();
     };
 
@@ -37,7 +51,7 @@ describe("cascade()", () => {
   });
 
   it("should return 404 if no middleware returns a Response", async () => {
-    const m1: Middleware = async (_req, _state, next) => {
+    const m1: Middleware = async (_ctx, next) => {
       return next();
     };
 
@@ -59,13 +73,13 @@ describe("cascade()", () => {
   });
 
   it("should allow middleware to mutate shared state", async () => {
-    const m1: Middleware<{ name?: string }> = async (req, state, next) => {
-      state.name = "Alice";
+    const m1: Middleware<{ name?: string }> = async (ctx, next) => {
+      ctx.state.name = "Alice";
       return next();
     };
 
-    const m2: Middleware<{ name?: string }> = async (_req, state) => {
-      return new Response(`Hello ${state.name}`, { status: 200 });
+    const m2: Middleware<{ name?: string }> = async (ctx, state) => {
+      return new Response(`Hello ${ctx.state.name}`, { status: 200 });
     };
 
     const handler = cascade(m1, m2);

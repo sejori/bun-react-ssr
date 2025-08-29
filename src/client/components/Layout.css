@@ -37,7 +37,7 @@ header img.spin-fast {
 
 main {
   flex: 1;
-  background-color: navajowhite;
+  background-color: beige;
   display: flex;
   flex-direction: column;
   align-items: center;

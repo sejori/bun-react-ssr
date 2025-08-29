@@ -1,7 +1,7 @@
 import { test, describe, expect } from "bun:test";
 import userEvent from '@testing-library/user-event'
 import Index from "../../../src/client/pages/Index/Index";
-import { renderToDocument } from "../test.utils";
+import { renderToDocument } from "../client.test-utils";
 
 describe("Index page", () => {
   test("renders heading from props", () => {

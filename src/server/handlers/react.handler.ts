@@ -1,14 +1,14 @@
 import { createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
-import { Middleware } from "../utils/middleware.ts";
+import { Middleware, MiddlewareContext } from "../utils/middleware.ts";
 
-export const reactHandler = <P extends {}>(
+export const reactHandler = <P extends {}, S extends object = any>(
   component: FC<P>, 
-  propsArg: P | ((req: Request, server: Bun.Server) => P)
-): Middleware =>
-  async (req, state) => {
+  propsArg: P | ((ctx: MiddlewareContext<S>) => P)
+): Middleware<S> =>
+  async (ctx: MiddlewareContext<S>) => {
     const props = typeof propsArg === "function"
-      ? (propsArg as (req: Request, state: {}) => P)(req, state)
+      ? (propsArg as (ctx: MiddlewareContext) => P)(ctx)
       : propsArg;
 
     const stream = await renderToReadableStream(

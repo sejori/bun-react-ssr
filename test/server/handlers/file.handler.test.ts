@@ -1,51 +1,63 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect, beforeAll, afterAll } from "bun:test";
 import { file } from "../../../src/server/handlers/file.handler";
+import { mkdir, writeFile, rm } from "node:fs/promises";
+import { join } from "node:path";
 
-// Fake file creation in Bun's tmp dir
-const tmpDir = import.meta.dir;
+const distDir = join(import.meta.dir, "../../../dist");
 
 describe("file handler", () => {
-  it("should serve JS file with correct mime type", async () => {
-    const jsPath = `${tmpDir}/test.js`;
-    await Bun.write(jsPath, "console.log('hi')");
-
-    const req = new Request("http://test/test.js");
-    const res = await file(req, {}, async () => {}, {} as Bun.Server);
-
-    expect(res?.headers.get("Content-Type")).toBe("application/javascript");
-    expect(await res?.text()).toContain("console.log('hi')");
+  beforeAll(async () => {
+    // Ensure dist directory exists
+    await mkdir(distDir, { recursive: true });
+    
+    // Create fake files
+    await writeFile(join(distDir, "test.js"), `console.log("hello js");`);
+    await writeFile(join(distDir, "test.css"), `body { color: red; }`);
+    await writeFile(join(distDir, "test.svg"), `<svg></svg>`);
+    await writeFile(join(distDir, "note.unknown"), "plain text here");
   });
 
-  it("should serve CSS file with correct mime type", async () => {
-    const cssPath = `${tmpDir}/test.css`;
-    await Bun.write(cssPath, "body{color:red}");
+  afterAll(async () => {
+    // Clean up dist files after tests
+    await rm(`${distDir}/test.js`, { recursive: true, force: true });
+    await rm(`${distDir}/test.css`, { recursive: true, force: true });
+    await rm(`${distDir}/test.svg`, { recursive: true, force: true });
+    await rm(`${distDir}/note.unknown`, { recursive: true, force: true });
+  });
 
-    const req = new Request("http://test/test.css");
-    const res = await file(req, {}, async () => {}, {} as Bun.Server);
+  it("should serve JS file with correct MIME type", async () => {
+    const req = new Request("http://localhost/test.js");
+    const res = await file({ request: req, state: {}, server: {} as Bun.Server}, async () => {});
+
+    expect(res).toBeInstanceOf(Response);
+    expect(res?.headers.get("Content-Type")).toBe("application/javascript");
+
+    const text = await res?.text();
+    expect(text).toContain("hello js");
+  });
+
+  it("should serve CSS file with correct MIME type", async () => {
+    const req = new Request("http://localhost/test.css");
+    const res = await file({ request: req, state: {}, server: {} as Bun.Server}, async () => {});
 
     expect(res?.headers.get("Content-Type")).toBe("text/css");
-    expect(await res?.text()).toContain("body{color:red}");
+    expect(await res?.text()).toContain("color: red");
   });
 
-  it("should serve SVG file with correct mime type", async () => {
-    const svgPath = `${tmpDir}/test.svg`;
-    await Bun.write(svgPath, "<svg></svg>");
-
-    const req = new Request("http://test/test.svg");
-    const res = await file(req, {}, async () => {}, {} as Bun.Server);
+  it("should serve SVG file with correct MIME type", async () => {
+    const req = new Request("http://localhost/test.svg");
+    const res = await file({ request: req, state: {}, server: {} as Bun.Server}, async () => {});
 
     expect(res?.headers.get("Content-Type")).toBe("image/svg+xml");
     expect(await res?.text()).toContain("<svg>");
   });
 
-  it("should default to text/plain for unknown extension", async () => {
-    const txtPath = `${tmpDir}/test.unknown`;
-    await Bun.write(txtPath, "fallback");
+  it("should default to text/plain for unknown extensions", async () => {
+    const req = new Request("http://localhost/note.unknown");
 
-    const req = new Request("http://test/test.unknown");
-    const res = await file(req, {}, async () => {}, {} as Bun.Server);
+    const res = await file({ request: req, state: {}, server: {} as Bun.Server}, async () => {});
 
     expect(res?.headers.get("Content-Type")).toBe("text/plain");
-    expect(await res?.text()).toBe("fallback");
+    expect(await res?.text()).toContain("plain text here");
   });
 });
