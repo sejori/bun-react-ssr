@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { file } from "../../../src/server/handlers/file.handler";
+import { file } from "../../../../src/server/_common/handlers/file.handler";
 import { mkdir, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-const distDir = join(import.meta.dir, "../../../dist");
+const distDir = join(import.meta.dir, "../../../../dist/client");
 
 describe("file handler", () => {
   beforeAll(async () => {

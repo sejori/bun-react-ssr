@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import React, { FC } from "react";
-import { reactHandler } from "../../../src/server/handlers/react.handler";
+import { reactHandler } from "../../../../src/server/_common/handlers/react.handler";
 
 const fakeServer = {} as unknown as Bun.Server;
 
