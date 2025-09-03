@@ -6,6 +6,6 @@ import Home from "../../../client/home/Home.page";
 export const homeHandler = cascade(
   log(console.log),
   reactHandler(Home, {
-    message: "Hello world"
+    message: "Barebones project starter template:"
   })
 );

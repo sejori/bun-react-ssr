@@ -16,7 +16,7 @@ export const reactHandler = <P extends {}, S extends object = any>(
       {
         bootstrapModules: [`/${component.name}/${component.name}.client.js`],
         bootstrapScriptContent: `
-          window.__INITIAL_PROPS__ = ${JSON.stringify(props)};
+          window.__SERVER_PROPS__ = ${JSON.stringify(props)};
         `,
         onError(error) {
           console.error("React SSR error:", error);

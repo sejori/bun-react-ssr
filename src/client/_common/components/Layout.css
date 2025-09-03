@@ -10,7 +10,8 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: darkcyan;
+  background-color: darkslategrey;
+  color: whitesmoke;
   padding: 2rem;
   font-size: x-large;
 }
@@ -26,6 +27,15 @@ header img.spin-fast {
   animation: spin 1s linear infinite;
 }
 
+
+header h1 {
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 5px 0 10px;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -37,7 +47,7 @@ header img.spin-fast {
 
 main {
   flex: 1;
-  background-color: beige;
+  background-color: whitesmoke;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -48,15 +58,36 @@ main {
   margin: 0.8rem;
 }
 
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid darkcyan;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1s linear infinite;
+}
+
 footer {
   display: flex;
   justify-content: center;
-  background-color: darkslategrey;
+  background-color: darkcyan;
   padding: 1rem;
   font-size: large;
   color: whitesmoke;
 }
 
-footer a {
-  color: pink;
+a {
+  color: hotpink;
+}
+
+summary details {
+  font-size: 1.2rem;
+}
+
+.row {
+  display: flex;
+}
+
+.centered {
+  justify-content: center;
 }

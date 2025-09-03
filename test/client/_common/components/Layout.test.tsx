@@ -37,7 +37,7 @@ describe("Layout component", () => {
       </Layout>
     );
 
-    expect(screen.getByText("Full-Stack Bun + React Template")).toBeInTheDocument();
+    expect(screen.getByText("Full-Stack Bun + React")).toBeInTheDocument();
     expect(screen.getByText("Child content")).toBeInTheDocument();
     expect(screen.getByText(/Built by/)).toBeInTheDocument();
   });

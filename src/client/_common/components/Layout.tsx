@@ -5,7 +5,7 @@ import "./Layout.css";
 import { useDemoStore } from "../hooks/useDemoStore";
 
 export const Layout = ({ children }) => {
-  const { items, storeItem, clearItems } = useDemoStore();
+  const { isLoading, items, storeItem, clearItems } = useDemoStore();
   const bunImg = useRef<HTMLImageElement>(null);
   const reactImg = useRef<HTMLImageElement>(null);
 
@@ -28,8 +28,9 @@ export const Layout = ({ children }) => {
       </div>
 
       <h1>
-        Full-Stack Bun + React Template
+        Full-Stack Bun + React
       </h1>
+      <a href="https://github.com/sejori/bun-react-ssr">source code</a>
     </header>
 
     <main>
@@ -37,21 +38,33 @@ export const Layout = ({ children }) => {
         {children}
       </div>
       
-      <div className="container">
-        <button onClick={() => storeItem({
-          itemId: crypto.randomUUID(),
-          action: "click",
-          details: Date.toString()
-        })}>
-          Add Item
-        </button>
-        <button onClick={clearItems}>
-          Clear Items
-        </button>
-        {items.map(item => <p key={item.itemId}>
-          {item.action} at {item.details}
-        </p>)}
-      </div>
+      <details className="container">
+        <summary>Local items</summary>
+        {isLoading
+          ? <div className="loader" />
+          : <>
+              <div className="flex">
+                <button onClick={() => storeItem({
+                  itemId: crypto.randomUUID(),
+                  action: "click",
+                  details: new Date().toISOString()
+                })}>
+                  Add Item
+                </button>
+                &nbsp;
+                <button onClick={clearItems}>
+                  Clear Items
+                </button>
+              </div>
+              {items.length
+                ? items.map(item => <p key={item.itemId}>
+                    {item.action} at {item.details}
+                  </p>)
+                : <p>No items yet...</p>
+                }
+            </>
+          }
+      </details>
     </main>
 
     <footer>

@@ -12,27 +12,44 @@ export default function Home(props: { message: string }) {
       <Layout>
         <h2>{props.message}</h2>
 
-        <p>{count}</p>
-        <button 
-          onClick={() => setCount(count+1)}
-        >
-          UP
-        </button>
-        <br />
-        <br />
+        <ul>
+          <li>No framework. Just React and Zod for API validation</li>
+          <li>Auto-building and super-fast server provided by Bun</li>
+          <li>Extensible middleware cascade on the server</li>
+          <li>Use middleware to manage server props with ease</li>
+          <li>Simple context example for client-side state</li>
+          <li>Un-opinionated, implement your favourite styling, ORM, etc</li>
+        </ul>
 
-        <input 
-          type="text"
-          aria-label="name-input"
-          value={name} 
-          onChange={e => setName(e.target.value)} 
-        />
-        <a 
-          aria-label="about-link" 
-          href={`/about?name=${name}`}
-        >
-          About {name}
-        </a>
+        <div className="row centered">
+          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{count}</p>
+          &nbsp;
+          <button 
+            onClick={() => setCount(count+1)}
+          >
+            UP
+          </button>
+        </div>
+
+        <hr />
+
+        <div className="row centered">
+          <input 
+            type="text"
+            aria-label="name-input"
+            value={name} 
+            onChange={e => setName(e.target.value)} 
+          />
+          &nbsp;
+          <a 
+            aria-label="about-link" 
+            href={`/about?name=${name}`}
+          >
+            About {name}
+          </a>
+        </div>
+
+        <hr />
       </Layout>
     </DemoProvider>
   </Document>;

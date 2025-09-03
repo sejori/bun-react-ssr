@@ -16,7 +16,7 @@ describe("reactHandler", () => {
 
     const text = await res?.text();
     expect(text).toContain("Hello Alice");
-    expect(text).toContain("window.__INITIAL_PROPS__ = {\"name\":\"Alice\"}");
+    expect(text).toContain("window.__SERVER_PROPS__ = {\"name\":\"Alice\"}");
   });
 
   it("should render component with dynamic props", async () => {
