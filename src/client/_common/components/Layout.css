@@ -18,12 +18,12 @@ header {
 header img {
   width: 150px; /* or whatever size fits your header */
   height: auto;
-  animation: spin 30s linear infinite;
+  animation: spin 10s linear infinite;
   transform-origin: center;
 }
 
 header img.spin-fast {
-  animation: spin 10s linear infinite;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

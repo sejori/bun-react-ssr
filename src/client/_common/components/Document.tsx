@@ -1,14 +1,14 @@
 import { ReactNode } from "react";
 
 // imported to auto-build into assets dir
-import "./assets/react.svg";
+import "../assets/react.svg";
 
 interface DocumentProps {
   page: string;
   children: ReactNode
 }
 
-export default function ({ page, children }: DocumentProps) {
+export const Document = ({ page, children }: DocumentProps) => {
   return <html>
     <head>
       <meta charSet="UTF-8" />

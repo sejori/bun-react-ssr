@@ -1,46 +1,35 @@
-import { cascade } from "./utils/middleware";
-import { log, LogState } from "./middleware/log.middleware";
-import { reactHandler } from "./handlers/react.handler";
-import { file } from "./handlers/file.handler";
+import { cascade } from "./_common/utils/middleware";
+import { log } from "./_common/middleware/log.middleware";
+import { file } from "./_common/handlers/file.handler";
+import { homeHandler } from "./ssr/handlers/home.handler";
+import { aboutHandler } from "./ssr/handlers/about.handler";
 
-import Index from "../client/pages/Index/Index";
-import About from "../client/pages/About/About";
+const port = process.env.PORT || 7777;
+const isDev = process.env.ENV === "dev";
 
-const PORT = process.env.PORT || 7777;
-
-Bun.build({
-  entrypoints: [
-    new URL("../client/pages/Index/Index.client.tsx", import.meta.url).pathname,
-    new URL("../client/pages/About/About.client.tsx", import.meta.url).pathname
-  ],
-  outdir: new URL("../../dist", import.meta.url).pathname,
-  naming: {
-    asset: "dist/[dir]/[name].[ext]",
+if (isDev) {
+  const { Glob } = await import("bun");
+  const clientPath = new URL("../client/", import.meta.url);
+  const clientEntryGlob = new Glob("**/*.client.ts");
+  const clientEntryPaths: string[] = [];
+  for await (const match of clientEntryGlob.scan(clientPath.pathname)) {
+    clientEntryPaths.push(new URL(match, clientPath).pathname);
   }
-});
+
+  Bun.build({
+    entrypoints: clientEntryPaths,
+    outdir: new URL("../../dist/client", import.meta.url).pathname,
+    naming: {
+      asset: "assets/[name].[ext]",
+    }
+  });
+}
 
 Bun.serve({
-  port: PORT,
+  port,
   routes: {
-    "/": cascade(
-      log(console.log),
-      reactHandler(Index, {
-        message: "Hello world"
-      })
-    ),
-    // Generic type for inline name middleware and reactHandler prop factory
-    "/about": cascade<LogState & {
-      name: string;
-    }>(
-      log(console.log),
-      (ctx) => {
-        ctx.state.name = new URL(ctx.request.url).searchParams.get("name") || ""
-      },
-      reactHandler(About, (ctx) => ({
-        name: ctx.state.name,
-        logged: ctx.state.logged,
-      }))
-    ),
+    "/": homeHandler,
+    "/about": aboutHandler
   },
   fetch: cascade(
     log(console.log),
@@ -48,4 +37,4 @@ Bun.serve({
   )
 });
 
-console.log(`Server running on port ${PORT}`);
+console.log(`Server running on port ${port}`);

@@ -1,8 +1,8 @@
 import { hydrateRoot } from "react-dom/client";
 import { createElement } from "react";
-import App from "./About";
+import Home from "./Home.page";
 
 hydrateRoot(
   document,
-  createElement(App, (window as any).__INITIAL_PROPS__)
+  createElement(Home, window.__SERVER_PROPS__)
 );
