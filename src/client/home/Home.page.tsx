@@ -1,12 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Document } from "../_common/components/Document";
 import { Layout } from "../_common/components/Layout";
 import { DemoProvider } from "../_common/contexts/demoContext";
 import { generateMsTimeString } from "../../_common/utils/date.utils";
+import { Counter } from "./components/Counter";
+import { AboutNav } from "./components/AboutNav";
 
 export default function Home(props: { requestTime: string }) {
-  const [count, setCount] = useState(0);
-  const [name, setName] = useState("Steve");
   const [hydrateTime, setHydrateTime] = useState("");
   useEffect(() => setHydrateTime(generateMsTimeString()), [setHydrateTime]);
 
@@ -24,35 +24,9 @@ export default function Home(props: { requestTime: string }) {
           <li>Simple client-side react context example for global state</li>
           <li>Un-opinionated, implement your favourite styling, ORM, etc</li>
         </ul>
-
-        <div className="row centered">
-          <p style={{ fontSize: "2rem", fontWeight: "bold" }}>{count}</p>
-          &nbsp;
-          <button 
-            onClick={() => setCount(count+1)}
-          >
-            UP
-          </button>
-        </div>
-
+        <Counter />
         <hr />
-
-        <div className="row centered">
-          <input 
-            type="text"
-            aria-label="name-input"
-            value={name} 
-            onChange={e => setName(e.target.value)} 
-          />
-          &nbsp;
-          <a 
-            aria-label="about-link" 
-            href={`/about/${name}`}
-          >
-            About {name}
-          </a>
-        </div>
-
+        <AboutNav />
         <hr />
       </Layout>
     </DemoProvider>

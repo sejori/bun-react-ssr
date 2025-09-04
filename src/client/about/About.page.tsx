@@ -14,12 +14,7 @@ export default function About(props: {
         <p><span>{props.name}</span> is a strong and dignified individual with a good heart.</p>
         <p>P.s. your request to this page was logged by the server: <span>{props.logged ? "true" : "false"}</span></p>
 
-        <a 
-          aria-label="home-link" 
-          href="/"
-        >
-          Home
-        </a>
+        <a aria-label="home-link" href="/">Home</a>
       </Layout>
     </DemoProvider>
   </Document>;

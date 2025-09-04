@@ -1,11 +1,10 @@
-import { useRef } from "react";
+import "./Layout.css";
 import "../assets/bun.svg";
 import "../assets/react.svg";
-import "./Layout.css";
-import { useDemoStore } from "../hooks/useDemoStore";
+import { useRef } from "react";
+import { LocalItems } from "./LocalItems";
 
 export const Layout = ({ children }) => {
-  const { isLoading, items, storeItem, clearItems } = useDemoStore();
   const bunImg = useRef<HTMLImageElement>(null);
   const reactImg = useRef<HTMLImageElement>(null);
 
@@ -38,33 +37,7 @@ export const Layout = ({ children }) => {
         {children}
       </div>
       
-      <details className="container">
-        <summary>Local items</summary>
-        {isLoading
-          ? <div className="loader" />
-          : <>
-              <div className="flex">
-                <button onClick={() => storeItem({
-                  itemId: crypto.randomUUID(),
-                  action: "click",
-                  details: new Date().toISOString()
-                })}>
-                  Add Item
-                </button>
-                &nbsp;
-                <button onClick={clearItems}>
-                  Clear Items
-                </button>
-              </div>
-              {items.length
-                ? items.map(item => <p key={item.itemId}>
-                    {item.action} at {item.details}
-                  </p>)
-                : <p>No items yet...</p>
-                }
-            </>
-          }
-      </details>
+      <LocalItems />
     </main>
 
     <footer>
