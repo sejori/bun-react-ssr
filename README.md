@@ -23,7 +23,7 @@ This app is containerised for deployment. You can build and run the docker image
 
 `src` contains `client`, `server` and `_common` directories:
 - `client` holds all react components, static assets and client-side entrypoint files.
-- `server` holds all server middleware, handlers, utilities and main entrypoint with routes.
+- `server` holds all server middleware, handlers, utils and main file with routes.
 - `_common` holds shared data models.
 
 The project utilises domain-driven-design architecture for clean organisation and scalability.
@@ -36,7 +36,7 @@ You do not need to manually build, it happens automatically in dev mode and in d
 
 ## Testing 
 
-`$ bun test` to run unit and integration tests for both client and server simulatenously.
+`$ bun test` to run unit and integration tests for client and server simulatenously.
 
 Tests are run in a conventional `CI` process on PR open to main or commit/merge to main.
 
@@ -44,6 +44,8 @@ The provided tests include integration tests for frontend pages and unit tests f
  - integration tests for backend routes and handlers
  - unit tests on the frontend utilities and UI snapshot testing. 
  - comprehensive E2E tests (Cypress, Playwright, etc)
+
+ **Note**: `bun.d.ts` extends the `Matchers` interface from `"bun:test"` to support IDE TypeScript. It also adds content types for static assets and the `__SERVER_PROPS__` property to the `Window` global. For custom testing, extended static file support or ssr modifications, you may need to update this file.
 
 ## Suggestions for your project:
 
