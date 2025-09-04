@@ -3,6 +3,6 @@ import { cascade } from "../../_common/utils/middleware";
 import { fileMiddleware } from "../middleware/file.middleware";
 
 export const fileHandler = cascade(
-    log(console.log),
-    fileMiddleware
-  )
+  log(console.log),
+  fileMiddleware
+)
