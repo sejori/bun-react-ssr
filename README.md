@@ -45,7 +45,7 @@ The provided tests include integration tests for frontend pages and unit tests f
  - unit tests on the frontend utilities and UI snapshot testing. 
  - comprehensive E2E tests (Cypress, Playwright, etc)
 
-**Note**: `bun.d.ts` extends the `Matchers` interface from `"bun:test"` to support IDE TypeScript. It also adds content types for static assets and the `__SERVER_PROPS__` property to the `Window` global. For custom testing, extended static file support or ssr modifications, you may need to update this file.
+**Note**: `bun.d.ts` extends the `Matchers` interface from `"bun:test"` to support `@testing-library`'s matcher types in your IDE. It also adds content types for static assets and the `__SERVER_PROPS__` property to the `Window` global. For custom testing, extended static file support or ssr modifications, you may need to update this file.
 
 ## Suggestions for your project:
 
