@@ -1,20 +1,23 @@
 import { createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
-import { Middleware, MiddlewareContext } from "../utils/middleware.ts";
+import { MiddlewareContext } from "../../_common/utils/middleware.ts";
 
-export const reactHandler = <P extends {}, S extends object = any>(
+export const reactMiddleware = <
+  P extends {}, 
+  C extends MiddlewareContext = MiddlewareContext
+>(
   component: FC<P>, 
-  propsArg: P | ((ctx: MiddlewareContext<S>) => P)
-): Middleware<S> =>
-  async (ctx: MiddlewareContext<S>) => {
+  propsArg: P | ((ctx: C) => P)
+ ) =>
+  async (ctx: C) => {
     const props = typeof propsArg === "function"
-      ? (propsArg as (ctx: MiddlewareContext) => P)(ctx)
+      ? (propsArg as (ctx: C) => P)(ctx as C)
       : propsArg;
 
     const stream = await renderToReadableStream(
       createElement(component, props),
       {
-        bootstrapModules: [`/${component.name}/${component.name}.client.js`],
+        bootstrapModules: [`/static/${component.name}/${component.name}.client.js`],
         bootstrapScriptContent: `
           window.__SERVER_PROPS__ = ${JSON.stringify(props)};
         `,

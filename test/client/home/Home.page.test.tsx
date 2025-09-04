@@ -12,6 +12,7 @@ describe("Home page", () => {
   let docSpy: Mock<typeof Document>;
   let layoutSpy: Mock<typeof Layout>;
   let demoProviderSpy: Mock<typeof DemoProvider>;
+  const mockTimeString = new Date().toISOString();
   
   beforeEach(async () => {
     const DocumentMod = await import("../../../src/client/_common/components/Document");
@@ -38,7 +39,7 @@ describe("Home page", () => {
   });
 
   test("renders into Document, Layout and DemoProvider parents", () => {
-    render(<Home message="Render test" />);
+    render(<Home requestTime={mockTimeString} />);
 
     expect(docSpy).toHaveBeenCalled();
     expect(layoutSpy).toHaveBeenCalled();
@@ -46,13 +47,12 @@ describe("Home page", () => {
   });
 
   test("renders name and logged status", () => {
-    render(<Home message="Hello world" />);
-    expect(screen.getByText("Hello world")).toBeInTheDocument();
+    render(<Home requestTime={mockTimeString} />);
+    expect(screen.getByText(mockTimeString)).toBeInTheDocument();
   });
 
   test("increments counter when button is clicked", async () => {
-    render(<Home message="Count test" />);
-    expect(screen.getByText("Count test")).toBeInTheDocument();
+    render(<Home requestTime={mockTimeString} />);
   
     expect(screen.getByText("0")).toBeInTheDocument();  
 
@@ -64,7 +64,7 @@ describe("Home page", () => {
   });
 
   test("updates link when input value changes", async () => {
-    render(<Home message="Input test" />);
+    render(<Home requestTime={mockTimeString} />);
     expect(screen.getByLabelText("about-link")).toHaveTextContent("Steve");
 
     await userEvent.type(screen.getByLabelText("name-input"), "Alice");

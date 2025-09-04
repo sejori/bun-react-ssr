@@ -1,18 +1,28 @@
-export interface MiddlewareContext<S extends object = any> {
-  request: Request;
-  server: Bun.Server;
+export interface MiddlewareContext<
+  S extends object = any,
+  R extends object = any,
+> {
   state: S;
+  request: Request & R;
+  server: Bun.Server;
 }
 
-export type Middleware<S extends object = any> = (
-  ctx: MiddlewareContext<S>,
+export type Middleware<
+S extends object = any,
+R extends object = any
+> = (
+  ctx: MiddlewareContext<S, R>,
   next: () => Promise<Response | void>
 ) => Promise<Response | void> | Response | void;
 
-export const cascade = <S extends object = any, M extends Middleware<S>[] = Middleware<S>[]>(...mware: M) =>
+export const cascade = <
+S extends object = any,
+R extends object = any,  
+M extends Middleware<S, R>[] = Middleware<S, R>[]
+>(...mware: M) =>
   async (request: Request, server: Bun.Server): Promise<Response> => {
     const ctx = {
-      request,
+      request: request as Request & R,
       server,
       state: {} as S
     };

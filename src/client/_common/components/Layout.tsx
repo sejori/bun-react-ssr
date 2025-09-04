@@ -14,14 +14,14 @@ export const Layout = ({ children }) => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <img 
           ref={bunImg} 
-          src="/assets/bun.svg" 
+          src="/static/assets/bun.svg" 
           onMouseEnter={() => bunImg.current?.classList.add("spin-fast")}
           onMouseLeave={() => bunImg.current?.classList.remove("spin-fast")}
         />
         &nbsp;
         <img 
           ref={reactImg} 
-          src="/assets/react.svg" 
+          src="/static/assets/react.svg" 
           onMouseEnter={() => reactImg.current?.classList.add("spin-fast")}
           onMouseLeave={() => reactImg.current?.classList.remove("spin-fast")}
         />

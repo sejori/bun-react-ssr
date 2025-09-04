@@ -1,6 +1,4 @@
-import { cascade } from "./_common/utils/middleware";
-import { log } from "./_common/middleware/log.middleware";
-import { file } from "./_common/handlers/file.handler";
+import { fileHandler } from "./file/handlers/file.hander";
 import { homeHandler } from "./ssr/handlers/home.handler";
 import { aboutHandler } from "./ssr/handlers/about.handler";
 
@@ -29,12 +27,10 @@ Bun.serve({
   port,
   routes: {
     "/": homeHandler,
-    "/about": aboutHandler
-  },
-  fetch: cascade(
-    log(console.log),
-    file
-  )
+    "/about": aboutHandler,
+    "/about/:name": aboutHandler,
+    "/static/:dir/:file": fileHandler
+  }
 });
 
 console.log(`Server running on port ${port}`);

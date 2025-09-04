@@ -16,8 +16,8 @@ export const Document = ({ page, children }: DocumentProps) => {
       <title>{`Bun React SSR | ${page}`}</title>
       <meta name="description" content="The smoothest React SSR on the web" />
       <meta name="robots" content="index, follow" />
-      <link rel="icon" href="/assets/react.svg" type="image/svg+xml" />
-      <link rel="stylesheet" href={`/${page}/${page}.client.css`} />
+      <link rel="icon" href="/static/assets/react.svg" type="image/svg+xml" />
+      <link rel="stylesheet" href={`/static/${page}/${page}.client.css`} />
     </head>
 
     <body>

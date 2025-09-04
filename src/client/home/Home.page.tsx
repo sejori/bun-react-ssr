@@ -1,23 +1,27 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Document } from "../_common/components/Document";
 import { Layout } from "../_common/components/Layout";
 import { DemoProvider } from "../_common/contexts/demoContext";
+import { generateMsTimeString } from "../../_common/utils/date.utils";
 
-export default function Home(props: { message: string }) {
+export default function Home(props: { requestTime: string }) {
   const [count, setCount] = useState(0);
   const [name, setName] = useState("Steve");
+  const [hydrateTime, setHydrateTime] = useState("");
+  useEffect(() => setHydrateTime(generateMsTimeString()), [setHydrateTime]);
 
   return <Document page="home">
     <DemoProvider>
       <Layout>
-        <h2>{props.message}</h2>
-
+        <h2>Barebones Full-Stack starter template</h2>
+        <p><strong>Server render time: </strong><span>{props.requestTime}</span></p>
+        <p><strong>Client interactive time: </strong><span>{hydrateTime}</span></p>
         <ul>
-          <li>No framework. Just React and Zod for API validation</li>
-          <li>Auto-building and super-fast server provided by Bun</li>
-          <li>Extensible middleware cascade on the server</li>
-          <li>Use middleware to manage server props with ease</li>
-          <li>Simple context example for client-side state</li>
+          <li>No framework. Just Bun's HTTP router, React and Zod</li>
+          <li>Auto asset building and super-fast server provided by Bun</li>
+          <li>Extensible middleware cascade util on the server for logging, auth etc</li>
+          <li>Type-safe React server-side rendering, never miss a prop</li>
+          <li>Simple client-side react context example for global state</li>
           <li>Un-opinionated, implement your favourite styling, ORM, etc</li>
         </ul>
 
@@ -43,7 +47,7 @@ export default function Home(props: { message: string }) {
           &nbsp;
           <a 
             aria-label="about-link" 
-            href={`/about?name=${name}`}
+            href={`/about/${name}`}
           >
             About {name}
           </a>
