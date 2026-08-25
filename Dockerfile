@@ -1,5 +1,4 @@
-# Runtime dependencies only — devDependencies (types, test tooling) never
-# reach the final image.
+# Base deps
 FROM oven/bun:alpine AS deps
 
 WORKDIR /app
@@ -8,7 +7,7 @@ COPY package.json bun.lock* ./
 
 RUN bun install --frozen-lockfile --production
 
-# Full install, so the client bundle can be built.
+# Bundle builder
 FROM oven/bun:alpine AS build
 
 WORKDIR /app
@@ -21,6 +20,7 @@ COPY . .
 
 RUN bun run build
 
+# Slim app runtime
 FROM oven/bun:alpine AS runtime
 
 WORKDIR /app
@@ -28,13 +28,10 @@ WORKDIR /app
 ENV ENV=prod
 ENV PORT=8080
 
-# --chown, because COPY preserves host file modes and the server runs unprivileged
-COPY --chown=bun:bun --from=deps /app/node_modules ./node_modules
-COPY --chown=bun:bun --from=build /app/dist ./dist
-COPY --chown=bun:bun package.json ./
-COPY --chown=bun:bun src ./src
-
-USER bun
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+COPY package.json ./
+COPY src ./src
 
 EXPOSE 8080
 
