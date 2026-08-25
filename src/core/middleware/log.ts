@@ -1,5 +1,5 @@
 import { Middleware } from "../utils/middleware";
-import { generateMsTimeString } from "../utils/date.utils";
+import { generateMsTimeString } from "../utils/date";
 
 export interface LogState {
   logged: boolean;

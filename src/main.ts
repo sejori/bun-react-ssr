@@ -1,11 +1,11 @@
-import { fileHandler } from "./handlers/file.hander";
-import { cascade } from "./utils/middleware";
-import { log, LogState } from "./middleware/log.middleware";
-import { reactMiddleware } from "./middleware/react.middleware";
-import { buildClient } from "./build";
+import { cascade } from "./core/utils/middleware";
+import { log, LogState } from "./core/middleware/log";
+import { reactMiddleware } from "./core/middleware/react";
+import { fileMiddleware } from "./core/middleware/file";
+import { buildClient } from "./core/utils/build";
 
-import Home from "./client/pages/home/Home.page";
-import About from "./client/pages/about/About.page";
+import Home from "./home/Home.page";
+import About from "./about/About.page";
 
 const port = process.env.PORT || 7777;
 const isDev = process.env.ENV === "dev";
@@ -28,13 +28,19 @@ const aboutHandler = cascade<LogState>(
   }))
 );
 
+
+const fileHandler = cascade(
+  log(console.log),
+  fileMiddleware
+);
+
 Bun.serve({
   port,
   routes: {
     "/": homeHandler,
     "/about": aboutHandler,
     "/about/:name": aboutHandler,
-    "/static/:dir/:file": fileHandler
+    "/static/:dir/:file": fileHandler 
   }
 });
 

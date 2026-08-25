@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Document } from "../../components/Document";
-import { Layout } from "../../components/Layout";
-import { DemoProvider } from "../../contexts/demoContext";
-import { generateMsTimeString } from "../../../utils/date.utils";
+import { Document } from "../core/components/Document";
+import { Layout } from "../core/components/Layout";
+import { DemoProvider } from "../core/contexts/demoContext";
+import { generateMsTimeString } from "../core/utils/date";
 import { Counter } from "./components/Counter";
 import { AboutNav } from "./components/AboutNav";
 

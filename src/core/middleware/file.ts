@@ -9,7 +9,7 @@ const mimeTypes: Record<string, string> = {
 export const fileMiddleware: Middleware = async (ctx) => {
   const { dir, file } = ctx.request.params as { dir: string, file: string };
   const path = new URL(
-    `../../dist/client/${dir}/${file}`,
+    `../../../dist/client/${dir}/${file}`,
     import.meta.url
   ).pathname;
 

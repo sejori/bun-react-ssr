@@ -1,8 +1,8 @@
 import { Glob } from "bun";
 
-const pagesUrl = new URL("./client/pages/", import.meta.url);
+const pagesUrl = new URL("../../", import.meta.url);
 const pagesPath = pagesUrl.pathname;
-const outdir = new URL("../dist/client", import.meta.url).pathname;
+const outdir = new URL("../../../dist/client", import.meta.url).pathname;
 
 export const buildClient = async ({ minify = false } = {}) => {
   const entrypoints: string[] = [];
