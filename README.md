@@ -6,7 +6,7 @@
 1. `$ bun install`
 2. `$ bun run dev`
 3. Go to `http://localhost:7777`
-4. Start editting `src/client/home/Home.page.tsx`
+4. Start editting `src/home/Home.page.tsx`
 5. Save file and refresh plage to see changes
 
 ## Containerisation
@@ -21,12 +21,12 @@ This app is containerised for deployment. You can build and run the docker image
 
 ## File Structure
 
-`src` contains `client`, `server` and `_common` directories:
-- `client` holds all react components, static assets and client-side entrypoint files.
-- `server` holds all server middleware, handlers, utils and main file with routes.
-- `_common` holds shared data models.
+`src` follows a domain-driven design layout with `core`, `about` and `home` directories:
+- `core` holds shared server middleware, handlers, utils, react components and static assets
+- `about` holds a basic about page and the client entrypoint for building a browser bundle.
+- `home` holds the home page along with some custom components (for now).
 
-The project utilises domain-driven-design architecture for clean organisation and scalability.
+The idea is that as your project scales and your pages (domains) grow, you will need specific middleware, utilities, components etc for those domains.
 
 ## Build
 
@@ -50,7 +50,7 @@ The provided tests include integration tests for frontend pages and unit tests f
 ## Suggestions for your project:
 
  - A standardised UI component library (with storybooks to review)
- - Analytics integration (cookie-based or via server endpoints)
+ - Analytics/warehouse integration (cookie-based or via server endpoints)
  - Redis middleware to cache page renders
  - Authentication middleware or basic verification
  - Postgres or other cloud database to persist user auth
