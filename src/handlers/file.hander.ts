@@ -1,5 +1,5 @@
-import { log } from "../../_common/middleware/log.middleware";
-import { cascade } from "../../_common/utils/middleware";
+import { log } from "../middleware/log.middleware";
+import { cascade } from "../utils/middleware";
 import { fileMiddleware } from "../middleware/file.middleware";
 
 export const fileHandler = cascade(

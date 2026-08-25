@@ -1,6 +1,6 @@
 import { createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
-import { MiddlewareContext } from "../../_common/utils/middleware.ts";
+import { MiddlewareContext } from "../utils/middleware.ts";
 
 export const reactMiddleware = <
   P extends {}, 
@@ -14,10 +14,14 @@ export const reactMiddleware = <
       ? (propsArg as (ctx: C) => P)(ctx as C)
       : propsArg;
 
+    // lowercased to match the built `<page>/<page>.client.js` paths on
+    // case-sensitive filesystems (i.e. everywhere but macOS)
+    const page = component.name.toLowerCase();
+
     const stream = await renderToReadableStream(
       createElement(component, props),
       {
-        bootstrapModules: [`/static/${component.name}/${component.name}.client.js`],
+        bootstrapModules: [`/static/${page}/${page}.client.js`],
         bootstrapScriptContent: `
           window.__SERVER_PROPS__ = ${JSON.stringify(props)};
         `,

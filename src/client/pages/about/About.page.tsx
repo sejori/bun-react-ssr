@@ -1,6 +1,6 @@
-import { Document } from "../_common/components/Document";
-import { Layout } from "../_common/components/Layout";
-import { DemoProvider } from "../_common/contexts/demoContext";
+import { Document } from "../../components/Document";
+import { Layout } from "../../components/Layout";
+import { DemoProvider } from "../../contexts/demoContext";
 
 export default function About(props: { 
   name: string, 

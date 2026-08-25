@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useState } from "react";
-import { demoItem, DemoItem, demoItems } from "../../../_common/models/demoItem.model";
+import { demoItem, DemoItem, demoItems } from "../../models/demoItem.model";
 
 const DEMO_STORE_KEY = "demo-store-items";
 

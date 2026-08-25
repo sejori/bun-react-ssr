@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Document } from "../_common/components/Document";
-import { Layout } from "../_common/components/Layout";
-import { DemoProvider } from "../_common/contexts/demoContext";
-import { generateMsTimeString } from "../../_common/utils/date.utils";
+import { Document } from "../../components/Document";
+import { Layout } from "../../components/Layout";
+import { DemoProvider } from "../../contexts/demoContext";
+import { generateMsTimeString } from "../../../utils/date.utils";
 import { Counter } from "./components/Counter";
 import { AboutNav } from "./components/AboutNav";
 
@@ -32,3 +32,4 @@ export default function Home(props: { requestTime: string }) {
     </DemoProvider>
   </Document>;
 }
+
