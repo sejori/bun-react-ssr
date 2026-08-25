@@ -1,6 +1,6 @@
 import { describe, it, expect } from "bun:test";
 import React, { FC } from "react";
-import { reactMiddleware } from "../../src/middleware/react.middleware";
+import { reactMiddleware } from "../../../src/core/middleware/react";
 
 const fakeServer = {} as unknown as Bun.Server;
 

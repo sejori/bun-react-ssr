@@ -1,4 +1,4 @@
-import { MiddlewareContext } from "../src/utils/middleware";
+import { MiddlewareContext } from "../src/core/utils/middleware";
 
 export const fakeServer = {} as unknown as Bun.Server;
 export const fakeContext = (req?: Request, state: object = {}): MiddlewareContext => {

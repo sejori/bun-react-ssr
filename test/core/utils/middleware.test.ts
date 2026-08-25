@@ -1,5 +1,5 @@
 import { describe, it, expect, mock } from "bun:test";
-import { cascade, Middleware } from "../../src/utils/middleware";
+import { cascade, Middleware } from "../../../src/core/utils/middleware";
 
 // Fake server object
 const fakeServer = {} as unknown as Bun.Server;

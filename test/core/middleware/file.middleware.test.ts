@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { fileMiddleware } from "../../src/middleware/file.middleware";
+import { fileMiddleware } from "../../../src/core/middleware/file";
 import { mkdir, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 
-const distDir = join(import.meta.dir, "../../dist/client/test");
+const distDir = join(import.meta.dir, "../../../dist/client/test");
 
 describe("file middleware", () => {
   beforeAll(async () => {
