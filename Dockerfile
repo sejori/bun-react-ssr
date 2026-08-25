@@ -5,7 +5,7 @@ WORKDIR /app
 ENV ENV=prod
 ENV PORT=8080
 
-COPY package.json bun.lockb* ./
+COPY package.json bun.lock* ./
 
 RUN bun install --frozen-lockfile
 
@@ -15,4 +15,4 @@ RUN bun run build
 
 EXPOSE 8080
 
-CMD ["bun", "run", "src/server/main.ts"]
+CMD ["bun", "run", "src/main.ts"]

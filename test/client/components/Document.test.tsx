@@ -1,6 +1,6 @@
 import { test, describe, expect } from "bun:test";
 import { renderToString } from "react-dom/server";
-import { Document } from "../../../../src/client/_common/components/Document";
+import { Document } from "../../../src/client/components/Document";
 
 describe("Document component", () => {
   test("renders correct HTML structure with metadata", () => {

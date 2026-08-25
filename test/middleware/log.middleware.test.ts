@@ -1,6 +1,6 @@
 import { describe, it, expect, mock } from "bun:test";
-import { log } from "../../../../src/server/_common/middleware/log.middleware";
-import { fakeContext } from "../../server.test-utils";
+import { log } from "../../src/middleware/log.middleware";
+import { fakeContext } from "../test-utils";
 
 describe("log middleware", () => {
   it("should mark state.logged as true and call next()", async () => {
