@@ -1,9 +1,9 @@
 import { describe, test, expect, beforeEach, spyOn, Mock, jest } from "bun:test";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-import { Layout } from "../../../src/core/components/Layout";
-import { useDemoStore } from "../../../src/core/hooks/useDemoStore";
-import { DemoContextType } from "../../../src/core/contexts/demoContext";
+import { Layout } from "@core/components/Layout";
+import { useDemoStore } from "@core/hooks/useDemoStore";
+import { DemoContextType } from "@core/contexts/demoContext";
 
 describe("Layout component", () => {
   let useDemoStoreSpy: Mock<typeof useDemoStore>;
@@ -11,7 +11,7 @@ describe("Layout component", () => {
   let clearItemsMock: Mock<DemoContextType["clearItems"]>;
 
   beforeEach(async () => {
-    const storeMod = await import("../../../src/core/hooks/useDemoStore");
+    const storeMod = await import("@core/hooks/useDemoStore");
 
     storeItemMock = jest.fn();
     clearItemsMock = jest.fn();

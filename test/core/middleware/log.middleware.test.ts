@@ -1,5 +1,5 @@
 import { describe, it, expect, mock } from "bun:test";
-import { log } from "../../../src/core/middleware/log";
+import { log } from "@core/middleware/log";
 import { fakeContext } from "../../test-utils";
 
 describe("log middleware", () => {

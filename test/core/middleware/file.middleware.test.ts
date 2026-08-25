@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "bun:test";
-import { fileMiddleware } from "../../../src/core/middleware/file";
+import { fileMiddleware } from "@core/middleware/file";
 import { mkdir, writeFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 

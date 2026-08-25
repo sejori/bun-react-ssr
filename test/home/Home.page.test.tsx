@@ -3,10 +3,10 @@ import { test, describe, expect, Mock, beforeEach, spyOn } from "bun:test";
 import userEvent from '@testing-library/user-event'
 import { render, screen } from "@testing-library/react";
 
-import Home from "../../src/home/Home.page";
-import { Document } from "../../src/core/components/Document";
-import { Layout } from "../../src/core/components/Layout";
-import { DemoProvider } from "../../src/core/contexts/demoContext";
+import Home from "@home/Home.page";
+import { Document } from "@core/components/Document";
+import { Layout } from "@core/components/Layout";
+import { DemoProvider } from "@core/contexts/demoContext";
 
 describe("Home page", () => {
   let docSpy: Mock<typeof Document>;
@@ -15,9 +15,9 @@ describe("Home page", () => {
   const mockTimeString = new Date().toISOString();
   
   beforeEach(async () => {
-    const DocumentMod = await import("../../src/core/components/Document");
-    const LayoutMod = await import("../../src/core/components/Layout");
-    const DemoContextMod = await import("../../src/core/contexts/demoContext");
+    const DocumentMod = await import("@core/components/Document");
+    const LayoutMod = await import("@core/components/Layout");
+    const DemoContextMod = await import("@core/contexts/demoContext");
 
     docSpy = spyOn(DocumentMod, "Document").mockImplementation(
       ({ children }: { children: React.ReactNode }) => (

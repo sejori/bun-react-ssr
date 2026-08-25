@@ -5,7 +5,7 @@
     "zod": "^4.1.5"
   },
   "scripts": {
-    "build": "bun run src/build.ts",
+    "build": "bun run src/core/utils/build.ts",
     "dev": "ENV=dev bun run --watch src/main.ts",
     "start": "ENV=prod bun run src/main.ts",
     "test": "bun test --verbose"

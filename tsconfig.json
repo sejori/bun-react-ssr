@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@test*": ["./test/*"],
+      "@core*": ["./src/core/*"],
+      "@home*": ["./src/home/*"],
+      "@about*": ["./src/about/*"]
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { base64ToBuffer, bufferToBase64 } from "./_helpers.ts";
+import { base64ToBuffer, bufferToBase64 } from "./base64.ts";
 
 const encoder = new TextEncoder();
 
@@ -6,10 +6,6 @@ type HMACData = { name: "HMAC"; hash: "SHA-256" | "SHA-384" | "SHA-512" };
 type RSAData = { name: "RSA"; hash: "SHA-256" | "SHA-384" | "SHA-512" };
 type AlgData = HMACData | RSAData;
 
-/**
- * Krypto class, generates hashes and signs/verifies JWTs using provided key.
- * @param key: CryptoKey | string
- */
 export class Krypto {
   algData: AlgData;
   key: CryptoKey | string;
@@ -22,9 +18,6 @@ export class Krypto {
     this.key = key;
   }
 
-  /**
-   * Create CryptoKey from rawKey string to be used in crypto methods
-   */
   static async createCryptoKey(
     key: string,
     algData: AlgData,
@@ -60,11 +53,6 @@ export class Krypto {
     );
   }
 
-  /**
-   * Generate hash from BodyInit contents
-   * @param contents: BodyInit
-   * @returns hash: string
-   */
   async hash(contents: BodyInit): Promise<string> {
     const temp = new Response(contents); // how to array buffer all the things
     const hashBuffer = await crypto.subtle.digest(
@@ -75,11 +63,6 @@ export class Krypto {
     return bufferToBase64(hashBuffer);
   }
 
-  /**
-   * Sign (create) JWT from payload
-   * @param payload: Record<string, unknown>
-   * @returns jwt: Promise<string>
-   */
   async sign(payload: Record<string, unknown>): Promise<string> {
     const key =
       this.key instanceof CryptoKey
@@ -104,11 +87,6 @@ export class Krypto {
     return `${b64Header}.${b64Payload}.${signature}`;
   }
 
-  /**
-   * Verify JWT and extract payload
-   * @param jwt: string
-   * @returns payload: Promise<Record<string, unknown> | false>
-   */
   async verify(jwt: string): Promise<Record<string, unknown> | false> {
     const key =
       this.key instanceof CryptoKey

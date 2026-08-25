@@ -1,11 +1,11 @@
-import { cascade } from "./core/utils/middleware";
-import { log, LogState } from "./core/middleware/log";
-import { reactMiddleware } from "./core/middleware/react";
-import { fileMiddleware } from "./core/middleware/file";
-import { buildClient } from "./core/utils/build";
+import { cascade } from "@core/utils/middleware";
+import { log, LogState } from "@core/middleware/log";
+import { reactMiddleware } from "@core/middleware/react";
+import { fileMiddleware } from "@core/middleware/file";
+import { buildClient } from "@core/utils/build";
 
-import Home from "./home/Home.page";
-import About from "./about/About.page";
+import Home from "@home/Home.page";
+import About from "@about/About.page";
 
 const port = process.env.PORT || 7777;
 const isDev = process.env.ENV === "dev";

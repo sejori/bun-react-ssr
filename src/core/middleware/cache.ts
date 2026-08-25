@@ -1,5 +1,5 @@
 import { CacheItem, defaultKeyGen } from "../utils/CacheItem.ts";
-import { Middleware } from "../../core/types.ts";
+import { Middleware } from "@core/types.ts";
 
 export type CacheState = {
   hitCache: boolean;
@@ -17,24 +17,6 @@ interface CacheOptions {
   };
 }
 
-/**
- * Configurable response cache for router, items stored in memory or via supplied options
- *
- * ```
- * interface CacheOptions {
- *   itemLifetime?: number
- *   keyGen?: typeof defaultKeyGen
- *   store?: {
- *     get: (key: string) => Promise<CacheItem | undefined> | CacheItem | undefined
- *     set: (key: string, value: CacheItem) => Promise<unknown> | unknown
- *     delete: (key: string) => Promise<unknown> | unknown
- *   }
- * }
- * ```
- *
- * @param cacheOptions: CacheOptions
- * @returns cacheMiddleware: Middleware
- */
 export const cache = (opts?: CacheOptions): Middleware<CacheState> => {
   const items: CacheItem[] = [];
   const getKey = opts && opts.keyGen ? opts.keyGen : defaultKeyGen;
