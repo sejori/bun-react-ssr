@@ -1,13 +1,16 @@
-// Page bundles import react through these bare specifiers instead of inlining
-// it, and @core/components/Document maps them to the shared vendor build.
+// Under `hmr` the client build rewrites these specifiers to the urls their
+// shims in `src/core/vendor` are served from, and leaves them external.
 //
-// One instance is what makes HMR viable: a chunk re-imported at `?h=<hash>`
-// re-runs, but its unqueried react import is already in the browser's module
-// map, so hooks keep talking to the same dispatcher. Bundling react per page
-// would give the replacement chunk its own copy, and every hook would throw.
+// One react instance is what makes HMR viable: a chunk re-imported at
+// `?h=<hash>` re-runs, but its rewritten react import is already in the
+// browser's module map, so hooks keep talking to the same dispatcher. Bundling
+// react per page would give the replacement chunk its own copy, and every hook
+// would throw.
 //
-// Keys are the specifiers marked external at build time, values the shims in
-// `src/core/vendor`.
+// The urls are baked into the bundle rather than mapped by an importmap in the
+// document: react hoists `<link rel="modulepreload">` above anything the
+// document renders, and a preload that resolves before the map is parsed fails
+// the bare specifier outright.
 export const vendorImports: Record<string, string> = {
   "react": "/static/vendor/react.js",
   "react-dom/client": "/static/vendor/react-dom.js",

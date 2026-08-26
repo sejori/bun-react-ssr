@@ -8,15 +8,19 @@ const outdir = new URL("../../../dist/client", import.meta.url).pathname;
 // a string only present when react itself is part of the bundle
 const REACT_INLINED = "react.transitional.element";
 
-// the specifier must look like a package, or react's own source text
+// the specifier must look like a package or a url, or react's own source text
 // ("... from " + name) matches too
 const specifiers = (bundle: string) =>
   [...bundle.matchAll(/(?:from|import)\s*"([^"]+)"/g)]
     .map(([, specifier]) => specifier!)
-    .filter((specifier) => /^[@a-z][a-z0-9@/._-]*$/i.test(specifier));
+    .filter((specifier) => /^[@a-z/][a-z0-9@/._-]*$/i.test(specifier));
 
-const imported = (bundle: string, pkg: string) =>
-  [...bundle.matchAll(new RegExp(`import\\s*\\{([^}]*)\\}\\s*from\\s*"${pkg}"`, "g"))]
+// bare, i.e. needing an importmap the browser may not have parsed in time
+const bare = (bundle: string) =>
+  specifiers(bundle).filter((specifier) => !specifier.startsWith("/"));
+
+const imported = (bundle: string, url: string) =>
+  [...bundle.matchAll(new RegExp(`import\\s*\\{([^}]*)\\}\\s*from\\s*"${url}"`, "g"))]
     .flatMap(([, names]) => names!.split(",").map((part) => part.split(" as ")[0]!.trim()));
 
 const bundles = async function* () {
@@ -38,15 +42,21 @@ describe("client build", () => {
   it("should leave react external under hmr so one instance is shared", async () => {
     const bundle = await Bun.file(`${outdir}/home/home.client.js`).text();
 
-    expect(specifiers(bundle)).toContain("react");
+    expect(specifiers(bundle)).toContain(vendorImports["react"]);
     // an inlined copy would give a re-imported chunk its own dispatcher
     expect(bundle).not.toContain(REACT_INLINED);
   });
 
-  it("should map every specifier the bundles leave external", async () => {
+  // a bare specifier would need an importmap, and react hoists its
+  // modulepreload above anything the document can render
+  it("should bake vendor urls in rather than leave bare specifiers", async () => {
+    const urls = Object.values(vendorImports);
+
     for await (const [match, bundle] of bundles()) {
-      for (const pkg of specifiers(bundle)) {
-        expect({ match, pkg }).toEqual({ match, pkg: pkg in vendorImports ? pkg : "unmapped" });
+      expect({ match, bare: bare(bundle) }).toEqual({ match, bare: [] });
+
+      for (const url of specifiers(bundle)) {
+        expect({ match, url }).toEqual({ match, url: urls.includes(url) ? url : "unmapped" });
       }
     }
   });
@@ -62,13 +72,13 @@ describe("client build", () => {
     };
 
     for await (const [match, bundle] of bundles()) {
-      for (const [pkg, path] of Object.entries(vendorImports)) {
-        const names = imported(bundle, pkg);
+      for (const url of Object.values(vendorImports)) {
+        const names = imported(bundle, url);
         if (!names.length) continue;
 
-        const available = await exported(path);
-        expect({ match, pkg, missing: names.filter((n) => !available.includes(n)) })
-          .toEqual({ match, pkg, missing: [] });
+        const available = await exported(url);
+        expect({ match, url, missing: names.filter((n) => !available.includes(n)) })
+          .toEqual({ match, url, missing: [] });
       }
     }
   });

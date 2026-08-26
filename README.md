@@ -49,16 +49,20 @@ re-fetched: stylesheets by swapping the `<link>` href, scripts by re-importing t
 This only works because the dev build does **not** bundle react into the page. A chunk re-imported at
 `?h=<hash>` re-runs, and a bundled react would come with it — the replacement components would then
 read hooks from a second, undispatched copy and every one of them would throw. So `buildClient({ hmr:
-true })` marks the specifiers in `@core/utils/vendor` external, builds `src/core/vendor` into one
-shared bundle, and `Document` emits an importmap pointing at it. Unqueried react imports stay in the
-browser's module map across a swap, so hooks keep talking to the same dispatcher.
+true })` marks the specifiers in `@core/utils/vendor` external and builds `src/core/vendor` into one
+shared bundle. The rewritten react imports stay in the browser's module map across a swap, so hooks
+keep talking to the same dispatcher.
+
+Those specifiers are rewritten to `/static/vendor/*.js` in the emitted javascript rather than mapped
+by an importmap in the document. React hoists `<link rel="modulepreload">` for the client bundle
+above anything the document renders, and a preload that starts resolving before the map is parsed
+fails the bare specifier outright — intermittently, depending on how the two race.
 
 The vendor bundle is built from `node_modules` into `dist/client/vendor` and served from
-`/static/vendor/*` like any other asset — the importmap only renames specifiers, so dev makes no
-external requests and works offline.
+`/static/vendor/*` like any other asset, so dev makes no external requests and works offline.
 
-`bun run build` leaves `hmr` off: react is inlined into each page bundle as before, no vendor build
-is emitted and `Document` renders no importmap. Prod output stays plain self-contained bundles.
+`bun run build` leaves `hmr` off: react is inlined into each page bundle as before and no vendor build
+is emitted. Prod output stays plain self-contained bundles.
 
 Those shims name their exports one by one rather than using `export *`: react ships CommonJS, and
 `export *` over it produces a shim the browser links as having no named exports. `bun test` fails if
