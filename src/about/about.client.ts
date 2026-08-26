@@ -1,8 +1,4 @@
-import { hydrateRoot } from "react-dom/client";
-import { createElement } from "react";
+import { hydratePage } from "@core/utils/hydrate";
 import About from "./About.page";
 
-hydrateRoot(
-  document,
-  createElement(About, window.__SERVER_PROPS__)
-);
+hydratePage(About);

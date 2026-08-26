@@ -2,6 +2,8 @@ import { createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import { MiddlewareContext } from "../utils/middleware.ts";
 
+const isDev = process.env.ENV === "dev";
+
 export const reactMiddleware = <
   P extends {}, 
   C extends MiddlewareContext = MiddlewareContext
@@ -21,9 +23,13 @@ export const reactMiddleware = <
     const stream = await renderToReadableStream(
       createElement(component, props),
       {
-        bootstrapModules: [`/static/${page}/${page}.client.js`],
+        bootstrapModules: [
+          `/static/${page}/${page}.client.js`,
+          ...(isDev ? ["/static/core/hmr.client.js"] : []),
+        ],
         bootstrapScriptContent: `
           window.__SERVER_PROPS__ = ${JSON.stringify(props)};
+          ${isDev ? `window.__HMR__ = "/static/${page}/${page}.client";` : ""}
         `,
         onError(error) {
           console.error("React SSR error:", error);

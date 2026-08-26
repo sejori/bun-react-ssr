@@ -3,6 +3,7 @@ import { log, LogState } from "@core/middleware/log";
 import { reactMiddleware } from "@core/middleware/react";
 import { fileMiddleware } from "@core/middleware/file";
 import { buildClient } from "@core/utils/build";
+import { hmrHandler, hmrWebsocket } from "@core/middleware/hmr";
 
 import Home from "@home/Home.page";
 import About from "@about/About.page";
@@ -40,8 +41,10 @@ Bun.serve({
     "/": homeHandler,
     "/about": aboutHandler,
     "/about/:name": aboutHandler,
-    "/static/:dir/:file": fileHandler 
-  }
+    "/static/:dir/:file": fileHandler,
+    ...(isDev && { "/__hmr": hmrHandler })
+  },
+  websocket: hmrWebsocket
 });
 
 console.log(`Server running on port ${port}`);

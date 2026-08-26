@@ -7,7 +7,7 @@
 2. `$ bun run dev`
 3. Go to `http://localhost:7777`
 4. Start editting `src/home/Home.page.tsx`
-5. Save file and refresh plage to see changes
+5. Save file to see changes applied without a reload
 
 ## Containerisation
 
@@ -33,6 +33,22 @@ The idea is that as your project scales and your pages (domains) grow, you will 
 `Bun.build` is used to generate client-side assets and store in the `dist/client` folder.
 
 You do not need to manually build, it happens automatically in dev mode and in docker build.
+
+## Hot module replacement
+
+In dev mode `bun --watch` restarts the server on every source change, which rebuilds the client
+bundles. Each build records a content hash per output file in an in-memory manifest
+(`@core/utils/build`), served over a websocket at `/__hmr` (`@core/middleware/hmr`).
+
+The browser runtime (`src/core/hmr.client.ts`, bootstrapped by the react middleware in dev) holds
+those hashes and reconnects after each restart. Any of the current page's chunks whose hash moved is
+re-fetched: stylesheets by swapping the `<link>` href, scripts by re-importing the entrypoint at
+`?h=<hash>`. Re-running an entrypoint calls `hydratePage` again, which re-renders the root held on
+`window.__ROOT__` rather than hydrating a second time.
+
+CSS edits apply in place. A script swap replaces the component tree, so React state inside it resets,
+but the page, its scroll position and the socket are never reloaded. None of this ships to prod: the
+runtime is only bootstrapped when `ENV=dev`.
 
 ## Testing 
 

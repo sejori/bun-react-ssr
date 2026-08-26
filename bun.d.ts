@@ -1,9 +1,11 @@
 import { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 
-// server prop access
+// server prop access and dev-only HMR handles
 declare global {
   interface Window {
     __SERVER_PROPS__: any;
+    __ROOT__?: import("react-dom/client").Root;
+    __HMR__: string;
   }
 }
 
