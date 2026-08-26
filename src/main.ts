@@ -13,7 +13,7 @@ const port = process.env.PORT || 7777;
 const isDev = process.env.ENV === "dev";
 
 // awaited so the server never serves a request before the bundle exists
-if (isDev) await buildClient();
+if (isDev) await buildClient({ hmr: true });
 
 const homeHandler = cascade<LogState>(
   log(console.log),

@@ -46,9 +46,27 @@ re-fetched: stylesheets by swapping the `<link>` href, scripts by re-importing t
 `?h=<hash>`. Re-running an entrypoint calls `hydratePage` again, which re-renders the root held on
 `window.__ROOT__` rather than hydrating a second time.
 
-CSS edits apply in place. A script swap replaces the component tree, so React state inside it resets,
-but the page, its scroll position and the socket are never reloaded. None of this ships to prod: the
-runtime is only bootstrapped when `ENV=dev`.
+This only works because the dev build does **not** bundle react into the page. A chunk re-imported at
+`?h=<hash>` re-runs, and a bundled react would come with it — the replacement components would then
+read hooks from a second, undispatched copy and every one of them would throw. So `buildClient({ hmr:
+true })` marks the specifiers in `@core/utils/vendor` external, builds `src/core/vendor` into one
+shared bundle, and `Document` emits an importmap pointing at it. Unqueried react imports stay in the
+browser's module map across a swap, so hooks keep talking to the same dispatcher.
+
+The vendor bundle is built from `node_modules` into `dist/client/vendor` and served from
+`/static/vendor/*` like any other asset — the importmap only renames specifiers, so dev makes no
+external requests and works offline.
+
+`bun run build` leaves `hmr` off: react is inlined into each page bundle as before, no vendor build
+is emitted and `Document` renders no importmap. Prod output stays plain self-contained bundles.
+
+Those shims name their exports one by one rather than using `export *`: react ships CommonJS, and
+`export *` over it produces a shim the browser links as having no named exports. `bun test` fails if
+a page bundle imports a name the shims miss, which is how a react upgrade gets caught.
+
+CSS edits apply in place, preserving React state entirely. A script swap replaces the component tree,
+so state inside it resets, but the page, its scroll position and the socket are never reloaded. None
+of this ships to prod: the runtime is only bootstrapped when `ENV=dev`.
 
 ## Testing 
 
