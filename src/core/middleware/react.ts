@@ -2,8 +2,6 @@ import { createElement, FC } from "react";
 import { renderToReadableStream } from "react-dom/server";
 import { MiddlewareContext } from "../utils/middleware.ts";
 
-const isDev = process.env.ENV === "dev";
-
 export const reactMiddleware = <
   P extends {}, 
   C extends MiddlewareContext = MiddlewareContext
@@ -12,6 +10,7 @@ export const reactMiddleware = <
   propsArg: P | ((ctx: C) => P)
  ) =>
   async (ctx: C) => {
+    const isDev = process.env.ENV === "dev";
     const props = typeof propsArg === "function"
       ? (propsArg as (ctx: C) => P)(ctx as C)
       : propsArg;
@@ -41,9 +40,9 @@ export const reactMiddleware = <
       headers: {
         "Content-Type": "text/html",
         "Cache-Control":
-          process.env.ENVIRONMENT === "PROD"
-            ? "max-age=86400, stale-while-revalidate=86400"
-            : "no-store",
+          isDev
+            ? "no-store"
+            : "max-age=86400, stale-while-revalidate=86400",
       },
     });
   };

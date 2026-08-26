@@ -2,6 +2,7 @@ import { cascade } from "@core/utils/middleware";
 import { log, LogState } from "@core/middleware/log";
 import { reactMiddleware } from "@core/middleware/react";
 import { fileMiddleware } from "@core/middleware/file";
+import { cache, CacheState } from "@core/middleware/cache";
 import { buildClient } from "@core/utils/build";
 import { hmrHandler, hmrWebsocket } from "@core/middleware/hmr";
 
@@ -21,8 +22,12 @@ const homeHandler = cascade<LogState>(
   }))
 );
 
-const aboutHandler = cascade<LogState>(
+// Home renders a fresh `requestTime` every hit, so only About — whose props are
+// derived from the URL — is cached. The default key is pathname + search, so
+// /about/Steve and /about/Bob get their own entries.
+const aboutHandler = cascade<LogState & CacheState>(
   log(console.log),
+  cache({ itemLifetime: 60_000 }),
   reactMiddleware(About, (ctx) => ({
     name: ctx.request.params.name,
     logged: ctx.state.logged,

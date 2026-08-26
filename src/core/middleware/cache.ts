@@ -1,5 +1,5 @@
 import { CacheItem, defaultKeyGen } from "../utils/CacheItem.ts";
-import { Middleware } from "@core/types.ts";
+import { Middleware } from "../utils/middleware.ts";
 
 export type CacheState = {
   hitCache: boolean;
@@ -8,6 +8,7 @@ export type CacheState = {
 interface CacheOptions {
   itemLifetime?: number;
   keyGen?: typeof defaultKeyGen;
+  // a Map satisfies this, so swapping in Redis is a drop-in
   store?: {
     get: (
       key: string
@@ -17,66 +18,37 @@ interface CacheOptions {
   };
 }
 
-export const cache = (opts?: CacheOptions): Middleware<CacheState> => {
-  const items: CacheItem[] = [];
-  const getKey = opts && opts.keyGen ? opts.keyGen : defaultKeyGen;
-  const getItem = (key: string) =>
-    opts && opts.store ? opts.store.get(key) : items.find((i) => i.key === key);
-
-  const setItem = (key: string, value: CacheItem) =>
-    opts && opts.store
-      ? opts.store.set(key, value)
-      : (items.push(value), undefined);
-
-  const deleteItem = (key: string) =>
-    opts && opts.store
-      ? opts.store.delete(key)
-      : (items.splice(
-          items.findIndex((i) => i.key === key),
-          1
-        ),
-        undefined);
+export const cache = (opts: CacheOptions = {}): Middleware<CacheState> => {
+  const store = opts.store ?? new Map<string, CacheItem>();
+  const getKey = opts.keyGen ?? defaultKeyGen;
 
   return async function cacheMiddleware(ctx, next) {
     const key = getKey(ctx);
-    const cacheItem = await getItem(key);
+    const item = await store.get(key);
+    const expired =
+      item && opts.itemLifetime && Date.now() > item.dob + opts.itemLifetime;
 
-    if (cacheItem) {
-      if (
-        opts &&
-        opts.itemLifetime &&
-        Date.now() > cacheItem.dob + opts.itemLifetime
-      ) {
-        deleteItem(key);
-      } else {
-        // ETag match triggers 304
-        const ifNoneMatch = ctx.request.headers.get("if-none-match");
-        const ETag = cacheItem.value.headers.get("ETag");
-        setItem(key, { ...cacheItem, count: cacheItem.count + 1 });
+    if (item && !expired) {
+      item.count++;
+      ctx.state.hitCache = true;
 
-        if (ETag && ifNoneMatch?.includes(ETag)) {
-          ctx.state.hitCache = true;
-          return new Response(null, {
-            headers: cacheItem.value.headers,
-            status: 304,
-          });
-        }
-
-        ctx.state.hitCache = true;
-        return cacheItem.value.clone();
+      // ETag match lets the browser reuse the copy it already holds
+      const etag = item.headers.get("ETag")!;
+      if (ctx.request.headers.get("if-none-match")?.includes(etag)) {
+        return new Response(null, { headers: item.headers, status: 304 });
       }
+
+      return item.response;
     }
 
+    if (expired) await store.delete(key);
+
     const response = await next();
-    if (!response) return;
+    if (!response?.ok) return response;
 
-    const newCacheItem = new CacheItem(
-      opts && opts.keyGen ? opts.keyGen(ctx) : defaultKeyGen(ctx),
-      response
-    );
+    const fresh = await CacheItem.from(key, response);
+    await store.set(key, fresh);
 
-    setItem(newCacheItem.key, newCacheItem);
-
-    return newCacheItem.value.clone();
+    return fresh.response;
   };
 };

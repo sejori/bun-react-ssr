@@ -1,5 +1,5 @@
 import { Krypto } from "../utils/krypto.ts";
-import { Middleware } from "../types.ts";
+import { Middleware } from "../utils/middleware.ts";
 
 export type AuthState<Payload = Record<string, unknown>> = {
   auth: Payload | null;
